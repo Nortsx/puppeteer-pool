@@ -19,7 +19,10 @@ const initPuppeteerPool = ({
   // TODO: randomly destroy old instances to avoid resource leak?
   const factory = {
     create: () => puppeteer.launch(...puppeteerArgs).then(instance => {
-      instance.useCount = 0
+      instance.useCount = 0;
+      instance.on('disconnected',() => {
+        instance.useCount = maxUses;
+      });
       return instance
     }),
     destroy: (instance) => {
